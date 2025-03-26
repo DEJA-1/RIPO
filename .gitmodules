@@ -1,0 +1,3 @@
+[submodule "src/faceDetection/face_sdk"]
+	path = src/faceDetection/face_sdk
+	url = https://github.com/JDAI-CV/FaceX-Zoo.git
