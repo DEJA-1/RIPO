@@ -1,7 +1,7 @@
 import cv2
 import os
 from datetime import datetime
-
+from src.faceDetection.detection import FaceDetector
 
 class CameraHandler:
     _SAVE_DIR = os.path.join(os.path.dirname(__file__), '..', 'data', 'model')
@@ -19,6 +19,8 @@ class CameraHandler:
         self.cap = cv2.VideoCapture(0)
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.FRAME_WIDTH)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.FRAME_HEIGHT)
+        self._analyze_mode = False
+        self._face_detector = None
 
     def start(self):
         if not self._is_opened():
@@ -30,6 +32,9 @@ class CameraHandler:
             if not success:
                 print("Error while fetching frame.")
                 break
+
+            if self._analyze_mode and self._face_detector:
+                frame = self._face_detector.analyze(frame)
 
             self._show_helper_texts(frame)
             cv2.imshow(self.WINDOW_NAME, frame)
@@ -67,4 +72,12 @@ class CameraHandler:
         print(f"Saved: {filename}")
 
     def _begin_analysis(self):
-        pass  # TODO - ADD LINK TO FACE_DETECTION FEATURES
+        if not self._face_detector:
+            self._face_detector = FaceDetector()
+        self._analyze_mode = not self._analyze_mode
+        print("Analysis mode:", "ON" if self._analyze_mode else "OFF")
+
+
+if __name__ == "__main__":
+    camera = CameraHandler()
+    camera.start()
